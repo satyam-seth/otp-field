@@ -28,7 +28,7 @@ export interface OTPFieldConfig {
 
   boxCount: number;
 
-  onPasteBlur: boolean;
+  onPasteBlur?: boolean;
 
   valueType?: OTPValueType;
 

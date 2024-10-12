@@ -162,7 +162,10 @@ export default class OTPField {
     }
 
     Logger.instance.info('config.onPasteBlur', this.config.onPasteBlur);
-    if (this.config.onPasteBlur) {
+    if (
+      this.config.onPasteBlur === true ||
+      this.config.onPasteBlur === undefined
+    ) {
       Logger.instance.info('Blur box');
       e.target.blur();
     } else {
