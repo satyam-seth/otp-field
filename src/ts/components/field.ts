@@ -1,8 +1,8 @@
-import { OTPFieldConfig, OTPValueType } from './types';
+import { OTPFieldConfig } from './types';
+import { OTPValueType } from '../utils/types';
+import { getOTPRegexForValueType } from '../utils/regex';
 
 /**
- * OTPField
- *
  * A class representing an OTP (One-Time Password) input field, designed to handle
  * multiple input boxes for entering a series of characters, typically used for
  * verification processes such as two-factor authentication.
@@ -255,44 +255,6 @@ export default class OTPField {
   }
 
   /**
-   *
-   * To get otp regex for given value type
-   *
-   * @param valueType {OTPValueType}
-   * @returns {RegExp}
-   *
-   */
-  // eslint-disable-next-line class-methods-use-this
-  private getOTPRegexForValueType(valueType: OTPValueType): RegExp {
-    switch (valueType) {
-      case OTPValueType.NUMERIC:
-        return /[^0-9]/g; // Match anything except digits
-
-      case OTPValueType.ALPHABETIC:
-        return /[^A-Za-z]/g; // Match anything except alphabetic characters
-
-      case OTPValueType.ALPHABETIC_LOWER:
-        return /[^a-z]/g; // Match anything except alphabetic lower characters
-
-      case OTPValueType.ALPHABETIC_UPPER:
-        return /[^A-Z]/g; // Match anything except alphabetic upper characters
-
-      case OTPValueType.ALPHANUMERIC:
-        return /[^A-Za-z0-9]/g; // Match anything except alphanumeric characters
-
-      case OTPValueType.ALPHANUMERIC_LOWER:
-        return /[^a-z0-9]/g; // Match anything except alphanumeric lower characters
-
-      case OTPValueType.ALPHANUMERIC_UPPER:
-        return /[^A-Za-z0-9]/g; // Match anything except alphanumeric upper characters
-
-      // throw error for invalid type
-      default:
-        throw new Error('Invalid OTP field value type');
-    }
-  }
-
-  /**
    * Returns a regular expression to filter OTP input values
    * based on the configured value type (numeric, alphabetic, or alphanumeric).
    * If a custom regex is provided in the configuration, that is used instead.
@@ -307,7 +269,7 @@ export default class OTPField {
     }
 
     // Otherwise, return a regex based on the specified or default value type
-    return this.getOTPRegexForValueType(
+    return getOTPRegexForValueType(
       this.config.valueType ?? OTPValueType.NUMERIC
     );
   }
