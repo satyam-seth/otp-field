@@ -1,16 +1,56 @@
 import Logger from '../utils/logger';
-import { OTPFieldConfig } from './types';
+import { OTPFieldConfig, OTPValueType } from './types';
 
 export default class OTPField {
   config: OTPFieldConfig;
-
-  // TODO: move it to config and set current value as default
-  regex = /[^0-9]/g;
 
   private fieldValue = '';
 
   get value() {
     return this.fieldValue;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  private getOTPRegexForValueType(type: OTPValueType): RegExp {
+    switch (type) {
+      case OTPValueType.NUMERIC:
+        return /[^0-9]/g; // Match anything except digits
+
+      case OTPValueType.ALPHABETIC:
+        return /[^A-Za-z]/g; // Match anything except alphabetic characters
+
+      case OTPValueType.ALPHABETIC_LOWER:
+        return /[^a-z]/g; // Match anything except alphabetic lower characters
+
+      case OTPValueType.ALPHABETIC_UPPER:
+        return /[^A-Z]/g; // Match anything except alphabetic upper characters
+
+      case OTPValueType.ALPHANUMERIC:
+        return /[^A-Za-z0-9]/g; // Match anything except alphanumeric characters
+
+      case OTPValueType.ALPHANUMERIC_LOWER:
+        return /[^a-z0-9]/g; // Match anything except alphanumeric lower characters
+
+      case OTPValueType.ALPHANUMERIC_UPPER:
+        return /[^A-Za-z0-9]/g; // Match anything except alphanumeric upper characters
+
+      default:
+        throw new Error('Invalid OTP field value type');
+    }
+  }
+
+  getOtpRegex(): RegExp {
+    if (this.config.customRegex) {
+      return this.config.customRegex;
+    }
+
+    return this.getOTPRegexForValueType(
+      this.config.valueType ?? OTPValueType.NUMERIC
+    );
+  }
+
+  applyRegex(value: string) {
+    return value.replace(this.getOtpRegex(), '');
   }
 
   focus() {
@@ -97,7 +137,7 @@ export default class OTPField {
     e.preventDefault();
 
     const pastedText: string = e.clipboardData.getData('text');
-    const pastedValue = pastedText.replace(this.regex, '');
+    const pastedValue = this.applyRegex(pastedText);
 
     Logger.instance.log('pasted value', pastedValue);
 
@@ -122,7 +162,10 @@ export default class OTPField {
     }
 
     Logger.instance.info('config.onPasteBlur', this.config.onPasteBlur);
-    if (this.config.onPasteBlur) {
+    if (
+      this.config.onPasteBlur === true ||
+      this.config.onPasteBlur === undefined
+    ) {
       Logger.instance.info('Blur box');
       e.target.blur();
     } else {
@@ -199,7 +242,7 @@ export default class OTPField {
     Logger.instance.log('Entered Value', e.target.value);
 
     // replace unwanted values
-    const updatedValue = e.target.value.replace(this.regex, '');
+    const updatedValue = this.applyRegex(e.target.value);
     Logger.instance.log('updatedValue Value', updatedValue);
 
     e.target.value = updatedValue;
