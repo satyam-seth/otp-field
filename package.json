@@ -1,5 +1,5 @@
 {
-  "name": "otp-field",
+  "name": "@satyam-seth/otp-field",
   "version": "1.0.0",
   "description": "A otp field build using ts and scss",
   "main": "index.js",
