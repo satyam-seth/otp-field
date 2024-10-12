@@ -1,3 +1,4 @@
+import Logger from '../utils/logger';
 import { OTPFieldConfig } from './types';
 
 export default class OTPField {
@@ -6,7 +7,25 @@ export default class OTPField {
   // TODO: move it to config and set current value as default
   regex = /[^0-9]/g;
 
-  value = '';
+  private fieldValue = '';
+
+  get value() {
+    return this.fieldValue;
+  }
+
+  focus() {
+    let focusBoxIndex = this.config.boxCount - 1;
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < this.config.boxCount; i++) {
+      if (this.getBoxValue(i) === '') {
+        focusBoxIndex = i;
+        break;
+      }
+    }
+
+    this.focusBox(focusBoxIndex);
+  }
 
   constructor(config: OTPFieldConfig) {
     if (config.boxCount <= 0) {
@@ -16,7 +35,7 @@ export default class OTPField {
     this.config = config;
 
     setInterval(() => {
-      // console.log('value =>>> ', this.value);
+      Logger.instance.info('value =>>> ', this.fieldValue);
     }, 1000);
   }
 
@@ -33,117 +52,224 @@ export default class OTPField {
     return field;
   }
 
+  private getBoxId(index: number) {
+    return `${this.config.namespace}-box-${index}`;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  private getBoxIndex(box: HTMLInputElement) {
+    const dataIndex = box.getAttribute('data-index');
+    if (dataIndex) {
+      return parseInt(dataIndex, 10);
+    }
+
+    Logger.instance.log('box', box);
+    throw new Error('Unable to get `data-index` attribute for box');
+  }
+
   private getBox(index: number) {
     const box = document.createElement('input');
-    box.id = `${this.config.namespace}-box-${index}`;
+    box.id = this.getBoxId(index);
     box.type = 'text';
     box.maxLength = 1;
     box.autocomplete = 'off';
     box.setAttribute('data-index', index.toString());
 
-    // TODO: once box is focused user now can able to click on 0 selection position
-    box.addEventListener('change', this.onBoxChange.bind(this));
     box.addEventListener('input', this.onBoxInput.bind(this));
     box.addEventListener('keydown', this.onBoxKeyDown.bind(this));
     box.addEventListener('focus', this.onBoxFocus.bind(this));
-    // box.addEventListener('paste', this.onBoxPaste.bind(this));
+    box.addEventListener('paste', this.onBoxPaste.bind(this));
 
     return box;
   }
 
-  // TODO: after paste only first box is focused
-  // TODO: not working in paste in middle
-  // onBoxPaste(e: any) {
-  //   e.preventDefault();
+  onBoxPaste(e: any) {
+    e.preventDefault();
 
-  //   const pastedText: string = e.clipboardData.getData('text');
-  //   const value = pastedText.replace(this.regex, '');
+    const pastedText: string = e.clipboardData.getData('text');
+    const pastedValue = pastedText.replace(this.regex, '');
 
-  //   const currentValueLength = this.value.length;
-  //   for (
-  //     let i = currentValueLength;
-  //     i < this.config.boxCount && i < value.length;
-  //     // eslint-disable-next-line no-plusplus
-  //     i++
-  //   ) {
-  //     const boxId = `${this.config.namespace}-box-${i}`;
-  //     const box = document.getElementById(boxId) as HTMLInputElement;
-  //     box.value = value[i - currentValueLength];
-  //   }
-  // }
+    Logger.instance.log('pasted value', pastedValue);
 
-  // eslint-disable-next-line no-unused-vars
-  onBoxChange(e: any) {
-    // console.log('change', e);
+    const currentBoxIndex = this.getBoxIndex(e.target);
+
+    Logger.instance.log('Current box index', currentBoxIndex);
+
+    const maxLength = Math.min(
+      this.config.boxCount - currentBoxIndex,
+      pastedValue.length
+    );
+
+    Logger.instance.log('maxLength', maxLength);
+
+    for (
+      let i = 0;
+      i < maxLength;
+      // eslint-disable-next-line no-plusplus
+      i++
+    ) {
+      this.setBoxValue(currentBoxIndex + i, pastedValue[i]);
+    }
+
+    Logger.instance.info('config.onPasteBlur', this.config.onPasteBlur);
+    if (this.config.onPasteBlur) {
+      Logger.instance.info('Blur box');
+      e.target.blur();
+    } else {
+      Logger.instance.info('Focus box');
+      this.focusBox(currentBoxIndex + maxLength - 1);
+    }
+
+    this.updateValue();
+  }
+
+  updateValue() {
     let value = '';
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < this.config.boxCount; i++) {
-      const boxId = `${this.config.namespace}-box-${i}`;
-      const box = document.getElementById(boxId) as HTMLInputElement;
-      value += box.value;
+      value += this.getBoxValue(i);
     }
 
-    // console.log('value', this.value, 'new value', value);
-    this.value = value;
+    Logger.instance.log('value', this.fieldValue, 'new value', value);
+    this.fieldValue = value;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   onBoxFocus(e: any) {
-    // console.log('focus', e);
-    const currentBoxIndex = parseInt(e.target.getAttribute('data-index'), 10);
-    // console.log('focus', currentBoxIndex);
+    Logger.instance.info('focus', e);
 
-    // 4,3
-    if (
-      currentBoxIndex === this.value.length ||
-      currentBoxIndex === this.value.length - 1
-    ) {
-      return;
+    // if current box have value select all
+    if (e.target.value.length === 1) {
+      Logger.instance.log(
+        'Select all value for current box, as value of current box not empty',
+        e.target.value
+      );
+      e.target.selectionStart = 0;
+      e.target.selectionEnd = 1;
     }
-
-    const focusBoxId = `${this.config.namespace}-box-${this.config.boxCount === this.value.length ? this.value.length - 1 : this.value.length}`;
-    // console.log('update focus', focusBoxId);
-    const focusBox = document.getElementById(focusBoxId)!;
-    focusBox.focus();
   }
 
   onBoxKeyDown(e: any) {
-    // console.log('keydown', e);
-    if (
-      e.key === 'ArrowLeft' ||
-      e.key === 'ArrowUp' ||
-      e.key === 'ArrowRight' ||
-      e.key === 'ArrowDown'
-    ) {
-      e.preventDefault(); // Prevent default action of arrow keys
+    Logger.instance.log('keydown', e);
+
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      Logger.instance.info('Key:ArrowLeft-ArrowUp move focus to prev box');
+      e.preventDefault();
+      this.focusPrevBox(e.target);
     }
 
-    if (e.key === 'Backspace' && e.target.value === '') {
-      const currentBoxIndex = parseInt(e.target.getAttribute('data-index'), 10);
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      Logger.instance.info('Key:ArrowRight-ArrowUp move focus to next box');
+      this.focusNextBox(e.target);
+    }
 
-      if (currentBoxIndex > 0) {
-        const prevBoxId = `${this.config.namespace}-box-${currentBoxIndex - 1}`;
-        const nextBox = document.getElementById(prevBoxId)!;
-        nextBox.focus();
-      }
+    if (
+      e.key === 'Backspace' &&
+      (e.target.value === '' || e.target.selectionEnd === 0)
+    ) {
+      Logger.instance.log('Key:Backspace move focus to prev box');
+      this.focusPrevBox(e.target);
+    }
+
+    if (
+      e.key === 'Delete' &&
+      (e.target.value === '' ||
+        (e.target.selectionStart !== 0 && e.target.selectionEnd === 1))
+    ) {
+      Logger.instance.log('Key:Delete move focus to next box');
+      this.focusNextBox(e.target);
     }
   }
 
   onBoxInput(e: any) {
-    // console.log('input', e);
+    Logger.instance.info('input', e);
 
-    e.target.value = e.target.value.replace(this.regex, '');
+    Logger.instance.log('Entered Value', e.target.value);
 
-    if (e.target.value === '') return;
+    // replace unwanted values
+    const updatedValue = e.target.value.replace(this.regex, '');
+    Logger.instance.log('updatedValue Value', updatedValue);
 
-    const currentBoxIndex = parseInt(e.target.getAttribute('data-index'), 10);
+    e.target.value = updatedValue;
 
-    if (currentBoxIndex + 1 < this.config.boxCount) {
-      const nextBoxId = `${this.config.namespace}-box-${currentBoxIndex + 1}`;
-      // console.log(nextBoxId);
-      const nextBox = document.getElementById(nextBoxId)!;
-      nextBox.focus();
+    Logger.instance.log('Value updated', updatedValue);
+
+    // if current box value is empty do nothing
+    if (e.target.value !== '') {
+      Logger.instance.info(
+        'target box value is not empty move focus to next box'
+      );
+      this.focusNextBox(e.target);
     }
+
+    this.updateValue();
+  }
+
+  focusNextBox(currentBox: HTMLInputElement) {
+    const currentBoxIndex = this.getBoxIndex(currentBox);
+    Logger.instance.info('currentBoxIndex', currentBoxIndex);
+    Logger.instance.log('config boxCount', this.config.boxCount);
+
+    Logger.instance.log(
+      'we need to jump to next box',
+      currentBoxIndex + 1 < this.config.boxCount
+    );
+
+    // if current box index is less than no of box count
+    if (currentBoxIndex + 1 < this.config.boxCount) {
+      Logger.instance.log('Focusing to next box at index', currentBoxIndex + 1);
+      this.focusBox(currentBoxIndex + 1);
+    }
+  }
+
+  focusPrevBox(currentBox: HTMLInputElement) {
+    const currentBoxIndex = this.getBoxIndex(currentBox);
+    Logger.instance.info('currentBoxIndex', currentBoxIndex);
+
+    Logger.instance.log(
+      'we need to jump to prev box',
+      currentBoxIndex - 1 >= 0
+    );
+
+    // if current box index is grater than or equal to zero
+    if (currentBoxIndex - 1 >= 0) {
+      Logger.instance.log('Focusing to next box at index', currentBoxIndex + 1);
+      this.focusBox(currentBoxIndex - 1);
+    }
+  }
+
+  focusBox(index: number) {
+    const box = this.getBoxAtIndex(index);
+    Logger.instance.info('Focusing to Box', box);
+
+    box.focus();
+  }
+
+  private setBoxValue(index: number, value: string) {
+    Logger.instance.log(`Setting box at index ${index} value to ${value}`);
+
+    const box = this.getBoxAtIndex(index);
+    box.value = value;
+  }
+
+  private getBoxValue(index: number) {
+    Logger.instance.log(`Getting box at index ${index} value`);
+
+    const box = this.getBoxAtIndex(index);
+    return box.value;
+  }
+
+  private getBoxAtIndex(index: number) {
+    const boxId = this.getBoxId(index);
+    const box = document.getElementById(boxId);
+
+    if (box === null) {
+      throw new Error(`Unable to get box at index ${index}`);
+    }
+
+    return box as HTMLInputElement;
   }
 
   get id(): string {
