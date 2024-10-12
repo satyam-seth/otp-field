@@ -7,7 +7,25 @@ export default class OTPField {
   // TODO: move it to config and set current value as default
   regex = /[^0-9]/g;
 
-  private value = '';
+  private fieldValue = '';
+
+  get value() {
+    return this.fieldValue;
+  }
+
+  focus() {
+    let focusBoxIndex = this.config.boxCount - 1;
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < this.config.boxCount; i++) {
+      if (this.getBoxValue(i) === '') {
+        focusBoxIndex = i;
+        break;
+      }
+    }
+
+    this.focusBox(focusBoxIndex);
+  }
 
   constructor(config: OTPFieldConfig) {
     if (config.boxCount <= 0) {
@@ -17,7 +35,7 @@ export default class OTPField {
     this.config = config;
 
     setInterval(() => {
-      // console.log('value =>>> ', this.value);
+      Logger.instance.info('value =>>> ', this.fieldValue);
     }, 1000);
   }
 
@@ -90,9 +108,7 @@ export default class OTPField {
       // eslint-disable-next-line no-plusplus
       i++
     ) {
-      const boxId = this.getBoxId(currentBoxIndex + i);
-      const box = document.getElementById(boxId) as HTMLInputElement;
-      box.value = pastedValue[i];
+      this.setBoxValue(currentBoxIndex + i, pastedValue[i]);
     }
 
     Logger.instance.info('config.onPasteBlur', this.config.onPasteBlur);
@@ -101,10 +117,10 @@ export default class OTPField {
       e.target.blur();
     } else {
       Logger.instance.info('Focus box');
-      const boxId = this.getBoxId(currentBoxIndex + maxLength - 1);
-      const box = document.getElementById(boxId) as HTMLInputElement;
-      box.focus();
+      this.focusBox(currentBoxIndex + maxLength - 1);
     }
+
+    this.updateValue();
   }
 
   updateValue() {
@@ -112,13 +128,11 @@ export default class OTPField {
 
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < this.config.boxCount; i++) {
-      const boxId = `${this.config.namespace}-box-${i}`;
-      const box = document.getElementById(boxId) as HTMLInputElement;
-      value += box.value;
+      value += this.getBoxValue(i);
     }
 
-    Logger.instance.log('value', this.value, 'new value', value);
-    this.value = value;
+    Logger.instance.log('value', this.fieldValue, 'new value', value);
+    this.fieldValue = value;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -128,7 +142,7 @@ export default class OTPField {
     // if current box have value select all
     if (e.target.value.length === 1) {
       Logger.instance.log(
-        'Select all value for current box, as value of current box not empty ->',
+        'Select all value for current box, as value of current box not empty',
         e.target.value
       );
       e.target.selectionStart = 0;
@@ -227,12 +241,35 @@ export default class OTPField {
   }
 
   focusBox(index: number) {
-    const boxId = this.getBoxId(index);
-
-    const box = document.getElementById(boxId) as HTMLInputElement;
+    const box = this.getBoxAtIndex(index);
     Logger.instance.info('Focusing to Box', box);
 
     box.focus();
+  }
+
+  private setBoxValue(index: number, value: string) {
+    Logger.instance.log(`Setting box at index ${index} value to ${value}`);
+
+    const box = this.getBoxAtIndex(index);
+    box.value = value;
+  }
+
+  private getBoxValue(index: number) {
+    Logger.instance.log(`Getting box at index ${index} value`);
+
+    const box = this.getBoxAtIndex(index);
+    return box.value;
+  }
+
+  private getBoxAtIndex(index: number) {
+    const boxId = this.getBoxId(index);
+    const box = document.getElementById(boxId);
+
+    if (box === null) {
+      throw new Error(`Unable to get box at index ${index}`);
+    }
+
+    return box as HTMLInputElement;
   }
 
   get id(): string {
