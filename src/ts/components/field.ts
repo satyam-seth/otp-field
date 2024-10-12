@@ -27,6 +27,16 @@ export default class OTPField {
     this.focusBox(focusBoxIndex);
   }
 
+  clear() {
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < this.config.boxCount; i++) {
+      this.setBoxValue(i, '');
+    }
+
+    this.fieldValue = '';
+    this.focusBox(0);
+  }
+
   constructor(config: OTPFieldConfig) {
     if (config.boxCount <= 0) {
       throw new Error('Invalid config box count must be grater than zero.');
