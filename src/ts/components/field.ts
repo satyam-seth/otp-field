@@ -28,10 +28,10 @@ import { OTPFieldConfig } from './types';
 // eslint-disable-next-line import/prefer-default-export
 export class OTPField {
   // Configuration for the OTP field
-  config: OTPFieldConfig;
+  private config: OTPFieldConfig;
 
   // Current value of the OTP input fields
-  private fieldValue = '';
+  private fieldValue: string = '';
 
   /**
    * Initializes the OTP input handler with the specified configuration.
@@ -100,7 +100,7 @@ export class OTPField {
    * - `focus`: To handle behavior when the input box gains focus.
    * - `paste`: To manage paste events (e.g., pasting OTP from clipboard).
    */
-  private getBoxElement(index: number) {
+  private getBoxElement(index: number): HTMLInputElement {
     const box = document.createElement('input');
 
     box.id = this.getBoxId(index); // Assign unique ID and basic attributes
@@ -129,7 +129,7 @@ export class OTPField {
    * the OTP as a single string. The `fieldValue` is typically updated
    * whenever the user inputs values into the OTP input boxes.
    */
-  get value() {
+  get value(): string {
     return this.fieldValue;
   }
 
@@ -180,7 +180,7 @@ export class OTPField {
    * If it finds an empty box, it focuses on that box.
    * If all boxes are filled, it focuses on the last box.
    */
-  focus() {
+  focus(): void {
     let focusBoxIndex = this.config.boxCount - 1;
 
     // Loop through each OTP input box
@@ -204,7 +204,7 @@ export class OTPField {
    * After clearing all boxes, it resets the `fieldValue` to an empty string
    * and sets focus on the first input box.
    */
-  clear() {
+  clear(): void {
     // Loop through each OTP input box and clear its value
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < this.config.boxCount; i++) {
@@ -253,7 +253,7 @@ export class OTPField {
    * to the document. This method does not perform checks on the parent element's
    * state or existence.
    */
-  build(parentElement: HTMLElement) {
+  build(parentElement: HTMLElement): void {
     parentElement.appendChild(this.skeleton());
   }
 
@@ -284,7 +284,7 @@ export class OTPField {
    * @param {string} value - The input string to be sanitized according to the OTP type.
    * @returns {string} - A new string with invalid characters removed.
    */
-  private applyRegex(value: string) {
+  private applyRegex(value: string): string {
     return value.replace(this.getOtpRegex(), '');
   }
 
@@ -300,7 +300,7 @@ export class OTPField {
    * with the index of the input box. This ensures that each OTP input box has a
    * distinct and predictable ID (e.g., 'namespace-box-0', 'namespace-box-1').
    */
-  private getBoxId(index: number) {
+  private getBoxId(index: number): string {
     return `${this.config.namespace}-box-${index}`;
   }
 
@@ -318,7 +318,7 @@ export class OTPField {
    * for the input box element, and returns it. If the input box does not exist,
    * an error is thrown to alert about the invalid index.
    */
-  private getBoxAtIndex(index: number) {
+  private getBoxAtIndex(index: number): HTMLInputElement {
     // Get the ID of the input box at the specified index
     const boxId = this.getBoxId(index);
 
@@ -349,7 +349,7 @@ export class OTPField {
    * OTP field (e.g., first box, second box).
    */
   // eslint-disable-next-line class-methods-use-this
-  private getBoxIndex(box: HTMLInputElement) {
+  private getBoxIndex(box: HTMLInputElement): number {
     const dataIndex = box.getAttribute('data-index');
 
     if (dataIndex) {
@@ -373,7 +373,7 @@ export class OTPField {
    * This method is typically called after user interactions (like input, paste, etc.)
    * to ensure the field value accurately reflects the current state of the input boxes.
    */
-  private updateValue() {
+  private updateValue(): void {
     // Initialize an empty string to hold the concatenated value
     let concatenatedValue = '';
 
@@ -397,7 +397,7 @@ export class OTPField {
    * This method retrieves the input box at the given index and sets the focus to it,
    * allowing the user to enter their OTP at the specified position in the sequence.
    */
-  private focusBox(index: number) {
+  private focusBox(index: number): void {
     // Retrieve the input box at the specified index
     const box = this.getBoxAtIndex(index);
 
@@ -415,7 +415,7 @@ export class OTPField {
    * This method checks if there is a next input box in the OTP field configuration.
    * If a next box exists, it focuses on that box, allowing for seamless input entry.
    */
-  private focusNextBox(currentBox: HTMLInputElement) {
+  private focusNextBox(currentBox: HTMLInputElement): void {
     // Get the index of the current box
     const currentBoxIndex = this.getBoxIndex(currentBox);
 
@@ -435,7 +435,7 @@ export class OTPField {
    * This method checks if there is a previous input box in the OTP field configuration.
    * If a previous box exists, it focuses on that box, enabling users to navigate back in their input.
    */
-  private focusPrevBox(currentBox: HTMLInputElement) {
+  private focusPrevBox(currentBox: HTMLInputElement): void {
     // Get the index of the current box
     const currentBoxIndex = this.getBoxIndex(currentBox);
 
@@ -456,7 +456,7 @@ export class OTPField {
    * This method retrieves the input box at the given index and assigns the specified value to it,
    * updating the displayed input for the user.
    */
-  private setBoxValue(index: number, value: string) {
+  private setBoxValue(index: number, value: string): void {
     // Retrieve the input box at the specified index
     const box = this.getBoxAtIndex(index);
 
@@ -475,7 +475,7 @@ export class OTPField {
    * This method fetches the input box at the given index and returns its current value,
    * allowing for access to the user's input in the OTP field.
    */
-  private getBoxValue(index: number) {
+  private getBoxValue(index: number): string {
     // Retrieve the input box at the specified index
     const box = this.getBoxAtIndex(index);
 
@@ -499,7 +499,7 @@ export class OTPField {
    * Otherwise, the focus moves to the last box that receives a pasted character. After updating the values,
    * the overall OTP value is updated.
    */
-  private onBoxPaste(e: ClipboardEvent) {
+  private onBoxPaste(e: ClipboardEvent): void {
     // Prevent the default paste behavior
     e.preventDefault();
 
@@ -548,7 +548,7 @@ export class OTPField {
    * This allows users to easily overwrite the value if they wish to enter a new character.
    */
   // eslint-disable-next-line class-methods-use-this
-  private onBoxFocus(e: FocusEvent) {
+  private onBoxFocus(e: FocusEvent): void {
     // Check if the current box has a value of length 1
     if ((e.target as HTMLInputElement).value.length === 1) {
       // Set the start of the selection to the beginning
@@ -571,7 +571,7 @@ export class OTPField {
    * - The Backspace key allows moving to the previous box if the current box is empty or the cursor is at the start.
    * - The Delete key allows moving to the next box if the current box is empty or if the user is trying to delete the only character.
    */
-  private onBoxKeyDown(e: KeyboardEvent) {
+  private onBoxKeyDown(e: KeyboardEvent): void {
     // Navigate to the previous box on ArrowLeft or ArrowUp key press
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault(); // Prevent default behavior
@@ -619,7 +619,7 @@ export class OTPField {
    * - If the input box is not empty after filtering, it automatically focuses on the next box.
    * - Updates the overall value of the OTP field to reflect the current state.
    */
-  private onBoxInput(e: Event) {
+  private onBoxInput(e: Event): void {
     // Replace unwanted values using the regex
     const updatedValue = this.applyRegex((e.target as HTMLInputElement).value);
 
