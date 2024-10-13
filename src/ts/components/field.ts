@@ -1,6 +1,6 @@
-import { OTPFieldConfig } from './types';
-import { OTPValueType } from '../utils/types';
 import { getOTPRegexForValueType } from '../utils/regex';
+import { OTPValueType } from '../utils/types';
+import { OTPFieldConfig } from './types';
 
 /**
  * A class representing an OTP (One-Time Password) input field, designed to handle
@@ -25,7 +25,8 @@ import { getOTPRegexForValueType } from '../utils/regex';
  * otpField.build(document.getElementById('otp-container'));
  * ```
  */
-export default class OTPField {
+// eslint-disable-next-line import/prefer-default-export
+export class OTPField {
   // Configuration for the OTP field
   config: OTPFieldConfig;
 
