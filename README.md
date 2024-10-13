@@ -8,7 +8,9 @@ A customizable and easy-to-use OTP (One-Time Password) input field component for
 - [Installation](#installation)
 - [Usage](#usage)
 - [API Reference](#api-reference)
+- [Example](#example)
 - [License](#license)
+- [Contributing](#contributing)
 
 ## Features
 
@@ -91,6 +93,10 @@ const otpValue = otpField.value;
 - `clear()`: Clears all OTP input boxes and resets the stored field value.
 - `build(parentElement: HTMLElement)`: Builds the OTP field and appends it to the specified parent element.
 - `destroy()`: Removes the OTP field element from the DOM.
+
+## Example
+
+You can check out the example [here](https://github.com/satyam-seth/otp-field-example)
 
 ## License
 
