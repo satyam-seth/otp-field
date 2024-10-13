@@ -1,0 +1,30 @@
+@import './box';
+
+@mixin otp-field {
+  .otp-field {
+    display: flex;
+    gap: 1rem;
+
+    @include otp-box;
+
+    &.error input.otp-box {
+      color: #721c24;
+      border-color: #dc3545;
+      background-color: #f8d7da;
+    }
+
+    &.success input.otp-box {
+      color: #155724;
+      border-color: #28a745;
+      background-color: #d4edda;
+    }
+
+    &.warning input.otp-box {
+      color: #856404;
+      border-color: #ffc107;
+      background-color: #fff3cd;
+    }
+
+    @content;
+  }
+}

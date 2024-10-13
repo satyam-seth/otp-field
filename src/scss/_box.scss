@@ -1,0 +1,35 @@
+@mixin otp-box {
+  .otp-box {
+    width: 3rem;
+    height: 3rem;
+    padding: 0.25rem;
+    opacity: 0.9;
+    text-align: center;
+    color: #333;
+    font-size: 2rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    border: 0.25rem solid gray;
+    transition: all 0.3s;
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    &:disabled {
+      border: none;
+      cursor: not-allowed;
+      opacity: 0.75;
+      transform: scale(0.9);
+    }
+
+    &::placeholder {
+      color: gray;
+    }
+
+    @content;
+  }
+}
