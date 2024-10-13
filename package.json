@@ -2,7 +2,8 @@
   "name": "@satyam-seth/otp-field",
   "version": "1.0.0",
   "description": "A otp field build using ts and scss",
-  "main": "index.js",
+  "main": "dist/js/main",
+  "typings": "dist/js/main",
   "scripts": {
     "build": "gulp",
     "build-ts": "gulp build-ts",
@@ -20,6 +21,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "types": "./dist/js/*.d.ts",
   "devDependencies": {
     "@playwright/test": "^1.40.1",
     "@types/chai": "^4.3.6",
@@ -28,10 +30,6 @@
     "@types/sinon": "^10.0.18",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
-    "babel-core": "^6.26.3",
-    "babel-preset-es2015": "^6.24.1",
-    "babelify": "^8.0.0",
-    "browserify": "^17.0.0",
     "chai": "^4.3.10",
     "eslint": "^8.47.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -41,7 +39,7 @@
     "gulp": "^4.0.0",
     "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^3.0.0",
-    "gulp-terser": "^2.1.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "jsdom": "^22.1.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^10.2.0",
@@ -51,9 +49,6 @@
     "sass-lint": "^1.13.1",
     "sinon": "^16.0.0",
     "ts-node": "^10.9.1",
-    "tsify": "^5.0.4",
-    "typescript": "^5.1.6",
-    "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0"
+    "typescript": "^5.1.6"
   }
 }
