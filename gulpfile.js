@@ -1,12 +1,8 @@
 const gulp = require('gulp');
 const dartSass = require('sass');
 const sass = require('gulp-sass')(dartSass);
-const browserify = require('browserify');
-const source = require('vinyl-source-stream');
-const terser = require('gulp-terser');
-const tsify = require('tsify');
 const sourcemaps = require('gulp-sourcemaps');
-const buffer = require('vinyl-buffer');
+const ts = require('gulp-typescript');
 
 // build scss
 const buildScss = () => {
@@ -20,25 +16,11 @@ const buildScss = () => {
 
 // build typescript
 const buildTs = () => {
-  return browserify({
-    basedir: '.',
-    debug: true,
-    entries: ['src/ts/main.ts'],
-    cache: {},
-    packageCache: {},
-  })
-    .plugin(tsify)
-    .transform('babelify', {
-      presets: ['es2015'],
-      extensions: ['.ts'],
-    })
-    .bundle()
-    .pipe(source('bundle.js'))
-    .pipe(buffer())
-    .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(terser())
-    .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('dist/js'));
+  const tsProject = ts.createProject('tsconfig.json');
+  return gulp
+    .src('src/ts/**/*.ts')
+    .pipe(tsProject())
+    .pipe(gulp.dest(tsProject.config.compilerOptions.outDir));
 };
 
 // task to build scss
