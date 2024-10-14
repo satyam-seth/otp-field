@@ -18,7 +18,7 @@ jobs:
       - name: 'Setup node'
         uses: actions/setup-node@v3
         with:
-          node-version: 17.9.1
+          node-version: 20
 
       - name: 'Install dependencies'
         run: npm ci
@@ -34,3 +34,41 @@ jobs:
 
       - name: 'Run build'
         run: npm run build
+
+  publish-npm:
+    name: 'Publish NPM 🚀'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+  publish-gpr:
+    name: 'Publish GPR 📢'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com/
+
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GPR_TOKEN}}
