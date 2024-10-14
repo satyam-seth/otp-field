@@ -570,6 +570,7 @@ export class OTPField {
    * - Arrow keys allow the user to navigate between boxes.
    * - The Backspace key allows moving to the previous box if the current box is empty or the cursor is at the start.
    * - The Delete key allows moving to the next box if the current box is empty or if the user is trying to delete the only character.
+   * - Prevent undo and redo operations
    */
   private onBoxKeyDown(e: KeyboardEvent): void {
     // Navigate to the previous box on ArrowLeft or ArrowUp key press
@@ -603,6 +604,11 @@ export class OTPField {
           (e.target as HTMLInputElement).selectionEnd === 1))
     ) {
       this.focusNextBox(e.target as HTMLInputElement); // Move focus to the next box
+    }
+
+    // Handle redo and undo
+    if (e.code === 'KeyZ' || e.code === 'KeyY') {
+      e.preventDefault();
     }
   }
 
