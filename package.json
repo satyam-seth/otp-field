@@ -1,7 +1,15 @@
 {
   "name": "@satyam-seth/otp-field",
-  "version": "1.0.0",
-  "description": "A otp field build using ts and scss",
+  "version": "1.0.1",
+  "description": "A configurable OTP field built using TypeScript and SCSS",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satyam-seth/otp-field.git"
+  },
+  "bugs": {
+    "url": "https://github.com/satyam-seth/otp-field/issues"
+  },
+  "homepage": "https://github.com/satyam-seth/otp-field#readme",
   "main": "dist/js/main",
   "typings": "dist/js/main",
   "scripts": {
@@ -15,7 +23,17 @@
     "test:unit": "mocha",
     "test:coverage": "nyc npm run test:unit"
   },
-  "keywords": [],
+  "keywords": [
+    "OTP",
+    "One Time Password",
+    "OTP Input",
+    "OTP Field",
+    "Verification code",
+    "Two-factor authentication",
+    "2FA",
+    "MFA",
+    "Authentication input"
+  ],
   "author": "",
   "license": "ISC",
   "types": "./dist/js/*.d.ts",
