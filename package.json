@@ -1,6 +1,6 @@
 {
   "name": "@satyam-seth/otp-field",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A configurable OTP field built using TypeScript and SCSS",
   "repository": {
     "type": "git",
@@ -13,6 +13,7 @@
   "main": "dist/js/main",
   "typings": "dist/js/main",
   "scripts": {
+    "prepare": "npm run build",
     "build": "gulp",
     "watch": "gulp watch",
     "dev": "gulp && gulp watch",
