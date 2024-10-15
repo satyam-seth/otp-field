@@ -13,6 +13,7 @@
   "main": "dist/js/main",
   "typings": "dist/js/main",
   "scripts": {
+    "prepare": "npm run build",
     "build": "gulp",
     "watch": "gulp watch",
     "dev": "gulp && gulp watch",
