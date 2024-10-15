@@ -42,13 +42,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: 'Checkout code'
+        uses: actions/checkout@v4
+
+      - name: 'Setup node'
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
 
-      - run: npm publish --access public
+      - name: 'Install dependencies'
+        run: npm ci
+
+      - name: 'Publish package'
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -63,12 +70,19 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: 'Checkout code'
+        uses: actions/checkout@v4
+
+      - name: 'Setup node'
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://npm.pkg.github.com/
 
-      - run: npm publish --access public
+      - name: 'Install dependencies'
+        run: npm ci
+
+      - name: 'Publish package'
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GPR_TOKEN }}
