@@ -88,9 +88,11 @@ const otpValue = otpField.value;
 
 - `value`: Retrieves the current value of the OTP input field.
 - `id`: Gets the unique identifier for the OTP field.
+- `isDisabled`: Retrieves the disabled state of the OTP input fields.
 - `element`: Gets the DOM element associated with the OTP field.
 - `focus()`: Sets focus on the first empty OTP input box. If all boxes are filled, focus is set to the last box.
 - `clear()`: Clears all OTP input boxes and resets the stored field value.
+- `disable(disabled: boolean)`: Disables or enables OTP input fields based on the provided boolean value.
 - `build(parentElement: HTMLElement)`: Builds the OTP field and appends it to the specified parent element.
 - `destroy()`: Removes the OTP field element from the DOM.
 

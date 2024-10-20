@@ -33,6 +33,9 @@ export class OTPField {
   // Current value of the OTP input fields
   private fieldValue: string = '';
 
+  // Tracks the disabled state of the OTP input fields
+  private disabled = false;
+
   /**
    * Initializes the OTP input handler with the specified configuration.
    *
@@ -134,6 +137,21 @@ export class OTPField {
   }
 
   /**
+   * Retrieves the disabled state of the OTP input fields.
+   *
+   * @returns {boolean} A boolean indicating whether the OTP input fields are currently disabled.
+   *
+   * @remarks
+   * This getter returns the current disabled state of the OTP component. If `true`,
+   * the input fields are non-interactive; if `false`, the fields are enabled and interactive.
+   * This method provides a quick way to check the disabled state without directly accessing
+   * internal properties.
+   */
+  get isDisabled() {
+    return this.disabled;
+  }
+
+  /**
    * Gets the unique identifier for the OTP field.
    *
    * @returns {string} The unique ID of the OTP field in the format `otp-field-{namespace}`.
@@ -194,6 +212,31 @@ export class OTPField {
     }
 
     this.focusBox(focusBoxIndex);
+  }
+
+  /**
+   * Disables or enables all OTP input fields.
+   *
+   * @param {boolean} disabled - A boolean indicating whether to disable (`true`) or enable (`false`)
+   *                             the OTP input fields.
+   *
+   * @remarks
+   * This method loops through each OTP input box and sets the `disabled` attribute based on the
+   * provided boolean value. When `disabled` is `true`, the input boxes are non-interactive,
+   * preventing user input. When set to `false`, the input fields are interactive again.
+   *
+   * The `disabled` state is also reflected in the internal component state for reference in
+   * other parts of the application.
+   */
+  disable(disabled: boolean) {
+    // Loop through each OTP input box
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < this.config.boxCount; i++) {
+      const box = this.getBoxAtIndex(i);
+      box.disabled = disabled;
+    }
+
+    this.disabled = disabled;
   }
 
   /**
