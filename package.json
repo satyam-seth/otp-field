@@ -1,6 +1,6 @@
 {
   "name": "@satyam-seth/otp-field",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A configurable OTP field built using TypeScript and SCSS",
   "repository": {
     "type": "git",
