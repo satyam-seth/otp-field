@@ -30,7 +30,7 @@ export function getOTPRegexForValueType(valueType: OTPValueType): RegExp {
       return /[^a-z0-9]/g; // Match anything except alphanumeric lower characters
 
     case OTPValueType.ALPHANUMERIC_UPPER:
-      return /[^A-Za-z0-9]/g; // Match anything except alphanumeric upper characters
+      return /[^A-Z0-9]/g; // Match anything except alphanumeric upper characters
 
     // throw error for invalid type
     default:
