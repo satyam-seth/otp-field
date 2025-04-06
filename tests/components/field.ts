@@ -24,4 +24,12 @@ describe('Test OTPField component', () => {
       'Invalid config box count must be grater than zero.'
     );
   });
+
+  it('should has correct id', () => {
+    // Create OTPField instance
+    const field = new OTPField(validConfig);
+
+    // Assert that id is correct
+    expect(field.id).to.equal('otp-field-test-namespace');
+  });
 });
