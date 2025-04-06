@@ -9,7 +9,19 @@ describe('Test OTPField component', () => {
     boxCount: 6,
   };
 
+  const invalidConfig: OTPFieldConfig = {
+    namespace: 'test-namespace',
+    boxCount: 0,
+  };
+
   it('should not throw an error for valid config', () => {
     expect(() => new OTPField(validConfig)).to.not.throw();
+  });
+
+  it('should throw an error for invalid config', () => {
+    expect(() => new OTPField(invalidConfig)).to.throw(
+      Error,
+      'Invalid config box count must be grater than zero.'
+    );
   });
 });
