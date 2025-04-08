@@ -78,9 +78,98 @@ describe('Test OTPField component', () => {
     for (let i = 0; i < validConfig.boxCount; i += 1) {
       expect(getBoxElementSpy.getCall(i).args[0]).to.be.equal(i);
 
-      // Assert that titleElement is appended in skeleton
+      // Assert that box element is appended in skeleton
       expect(skeleton.querySelector(`#${validConfig.namespace}-box-${i}`)).to
         .exist;
     }
+  });
+
+  it('getBoxElement should return correct html element', () => {
+    // Create OTPField instance
+    validConfig.boxCount = 1;
+    const field = new OTPField(validConfig);
+
+    // Create stub for onBoxInput
+    const onBoxInputStub = sinon
+      // @ts-ignore
+      .stub(field, 'onBoxInput')
+      // eslint-disable-next-line no-unused-vars, no-console
+      .callsFake((e: Event) => console.log('Fake onBoxInput called'));
+
+    // Create stub for onBoxKeyDown
+    const onBoxKeyDownStub = sinon
+      // @ts-ignore
+      .stub(field, 'onBoxKeyDown')
+      // eslint-disable-next-line no-unused-vars, no-console
+      .callsFake((e: Event) => console.log('Fake onBoxKeyDown called'));
+
+    // Create stub for onBoxFocus
+    const onBoxFocusStub = sinon
+      // @ts-ignore
+      .stub(field, 'onBoxFocus')
+      // eslint-disable-next-line no-unused-vars, no-console
+      .callsFake((e: Event) => console.log('Fake onBoxFocus called'));
+
+    // Create stub for onBoxPaste
+    const onBoxPasteStub = sinon
+      // @ts-ignore
+      .stub(field, 'onBoxPaste')
+      // eslint-disable-next-line no-unused-vars, no-console
+      .callsFake((e: Event) => console.log('Fake onBoxPaste called'));
+
+    // eslint-disable-next-line
+    const boxElement = field['getBoxElement'](0);  // bypass private;
+
+    // Assert that the boxElement is an HTMLInputElement
+    expect(boxElement).to.be.instanceOf(HTMLInputElement);
+
+    // Assert that the boxElement element has the correct tag name
+    expect(boxElement.tagName).to.be.equal('INPUT');
+
+    // Assert that the boxElement element has the correct id
+    expect(boxElement.id).to.be.equal(`${validConfig.namespace}-box-0`);
+
+    // Assert that the boxElement element has the correct class name
+    expect(boxElement.className).to.be.equal('otp-box');
+
+    // Assert that the boxElement element has the correct type
+    expect(boxElement.type).to.be.equal('text');
+
+    // Assert that the boxElement element has the correct maxLength
+    expect(boxElement.maxLength).to.be.equal(1);
+
+    // Assert that the boxElement element has the autocomplete
+    expect(boxElement.autocomplete).to.be.equal('off');
+
+    // Assert that the boxElement element has the data-index attribute
+    expect(boxElement.getAttribute('data-index')).to.be.equal('0');
+
+    // Simulate a input event on the boxElement
+    const inputEvent = new Event('input');
+    boxElement.dispatchEvent(inputEvent);
+
+    // Assert that the onBoxInputStub called once
+    expect(onBoxInputStub.calledOnce).to.be.true;
+
+    // Simulate a keyDown event on the boxElement
+    const keyDownEvent = new Event('keydown');
+    boxElement.dispatchEvent(keyDownEvent);
+
+    // Assert that the onBoxKeyDownStub called once
+    expect(onBoxKeyDownStub.calledOnce).to.be.true;
+
+    // Simulate a focus event on the boxElement
+    const focusEvent = new Event('focus');
+    boxElement.dispatchEvent(focusEvent);
+
+    // Assert that the onBoxFocusStub called once
+    expect(onBoxFocusStub.calledOnce).to.be.true;
+
+    // Simulate a paste event on the boxElement
+    const pasteEvent = new Event('paste');
+    boxElement.dispatchEvent(pasteEvent);
+
+    // Assert that the onBoxPasteStub called once
+    expect(onBoxPasteStub.calledOnce).to.be.true;
   });
 });
