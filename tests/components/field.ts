@@ -172,4 +172,17 @@ describe('Test OTPField component', () => {
     // Assert that the onBoxPasteStub called once
     expect(onBoxPasteStub.calledOnce).to.be.true;
   });
+
+  it('value getter should return the correct value', () => {
+    const field = new OTPField(validConfig);
+
+    // Assert that the field value initially empty string
+    expect(field.value).to.equal('');
+
+    // eslint-disable-next-line
+    field['fieldValue'] = '123456';
+
+    // Assert that the field value return correct value
+    expect(field.value).to.equal('123456');
+  });
 });
