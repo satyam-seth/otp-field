@@ -185,4 +185,11 @@ describe('Test OTPField component', () => {
     // Assert that the field value return correct value
     expect(field.value).to.equal('123456');
   });
+
+  it('isDisabled getter should return the correct value', () => {
+    const field = new OTPField(validConfig);
+
+    // Assert that the field value return correct value
+    expect(field.isDisabled).to.equal(false);
+  });
 });
