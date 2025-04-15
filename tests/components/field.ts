@@ -189,7 +189,14 @@ describe('Test OTPField component', () => {
   it('isDisabled getter should return the correct value', () => {
     const field = new OTPField(validConfig);
 
-    // Assert that the field value return correct value
+    // Assert that the field isDisabled return correct value
     expect(field.isDisabled).to.equal(false);
+  });
+
+  it('id getter should return the correct value', () => {
+    const field = new OTPField(validConfig);
+
+    // Assert that the field id return correct value
+    expect(field.id).to.equal('otp-field-test-namespace');
   });
 });
