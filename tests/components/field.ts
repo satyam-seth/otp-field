@@ -199,4 +199,29 @@ describe('Test OTPField component', () => {
     // Assert that the field id return correct value
     expect(field.id).to.equal('otp-field-test-namespace');
   });
+
+  it('element should retrieve button HTMLElement', () => {
+    const field = new OTPField(validConfig);
+
+    // Expected button id
+    const fieldId = `otp-field-${validConfig.namespace}`;
+
+    // Create spy for document getElementById
+    const getElementByIdSpy = sinon.spy(document, 'getElementById');
+
+    // Call the build method
+    field.build(document.body);
+
+    // Call element
+    const result = field.element;
+
+    // Assert that getElementById call with expected id
+    expect(getElementByIdSpy.calledOnceWith(fieldId)).to.be.true;
+
+    // Assert that the result is an HTMLElement
+    expect(result).to.be.an.instanceOf(HTMLElement);
+
+    // Assert that result HTMLElement has expected id
+    expect(result.id).to.equal(fieldId);
+  });
 });
