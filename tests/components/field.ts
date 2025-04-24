@@ -224,4 +224,13 @@ describe('Test OTPField component', () => {
     // Assert that result HTMLElement has expected id
     expect(result.id).to.equal(fieldId);
   });
+
+  it('element should throw error if HTMLElement not found', () => {
+    const field = new OTPField(validConfig);
+
+    expect(() => field.element).to.throw(
+      Error,
+      'Element with ID otp-field-test-namespace not found in the DOM.'
+    );
+  });
 });
