@@ -233,4 +233,32 @@ describe('Test OTPField component', () => {
       'Element with ID otp-field-test-namespace not found in the DOM.'
     );
   });
+
+  it('focus should focus the first empty box', () => {
+    const field = new OTPField(validConfig);
+
+    // Create stub for getBoxValue
+    // @ts-ignore - bypass private
+    const getBoxValueStub = sinon.stub(field, 'getBoxValue');
+
+    // Create spy for focusBox
+    // @ts-ignore - bypass private
+    const focusBoxSpy = sinon.spy(field, 'focusBox');
+
+    // Call the build method
+    field.build(document.body);
+
+    // Assume the first box is filled
+    getBoxValueStub.onCall(0).returns('1');
+    getBoxValueStub.onCall(1).returns('');
+
+    // Call the build method
+    field.build(document.body);
+
+    // Call the focus method
+    field.focus();
+
+    // Assert focus box called for 2nd box
+    expect(focusBoxSpy.calledOnceWith(1)).to.be.true;
+  });
 });
