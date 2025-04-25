@@ -261,4 +261,25 @@ describe('Test OTPField component', () => {
     // Assert focus box called for 2nd box
     expect(focusBoxSpy.calledOnceWith(1)).to.be.true;
   });
+
+  it('focus should focus the last box if all boxes are filled', () => {
+    const field = new OTPField(validConfig);
+
+    // Create stub for getBoxValue
+    // @ts-ignore - bypass private
+    const getBoxValueStub = sinon.stub(field, 'getBoxValue');
+
+    // Create spy for focusBox
+    // @ts-ignore - bypass private
+    const focusBoxSpy = sinon.spy(field, 'focusBox');
+
+    // Assume all boxes are filled
+    getBoxValueStub.returns('1');
+
+    // Call the focus method
+    field.focus();
+
+    // Assert focus box called for last box
+    expect(focusBoxSpy.calledOnceWith(5)).to.be.true; // 5 = boxCount - 1
+  });
 });
