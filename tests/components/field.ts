@@ -283,7 +283,7 @@ describe('Test OTPField component', () => {
     expect(focusBoxSpy.calledOnceWith(5)).to.be.true; // 5 = boxCount - 1
   });
 
-  it('should disable all input boxes when disable(true) is called', () => {
+  it('should disable all input boxes when disable is called', () => {
     const field = new OTPField(validConfig);
 
     // Call the build method
@@ -292,6 +292,7 @@ describe('Test OTPField component', () => {
     // Call the disable method with value true
     field.disable(true);
 
+    // Assert that all boxes are disabled
     for (let i = 0; i < validConfig.boxCount; i += 1) {
       const box = document.getElementById(
         `${validConfig.namespace}-box-${i}`
@@ -299,7 +300,23 @@ describe('Test OTPField component', () => {
       expect(box.disabled).to.be.true;
     }
 
+    // Assert field disabled state true
     // eslint-disable-next-line
     expect(field['disabled']).to.be.true;
+
+    // Call the disable method with value false
+    field.disable(false);
+
+    // Assert that all boxes are disabled
+    for (let i = 0; i < validConfig.boxCount; i += 1) {
+      const box = document.getElementById(
+        `${validConfig.namespace}-box-${i}`
+      ) as HTMLInputElement;
+      expect(box.disabled).to.be.false;
+    }
+
+    // Assert field disabled state false
+    // eslint-disable-next-line
+    expect(field['disabled']).to.be.false;
   });
 });
