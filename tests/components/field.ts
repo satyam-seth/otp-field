@@ -319,4 +319,29 @@ describe('Test OTPField component', () => {
     // eslint-disable-next-line
     expect(field['disabled']).to.be.false;
   });
+
+  it('should clear all input boxes, reset fieldValue, and focus on the first box', () => {
+    const field = new OTPField(validConfig);
+
+    // Stub setBoxValue and focusBox
+    const setBoxValueStub = sinon.stub(field as any, 'setBoxValue');
+    const focusBoxStub = sinon.stub(field as any, 'focusBox');
+
+    // Set a non-empty field value
+    (field as any).fieldValue = '1234';
+
+    field.clear();
+
+    // Ensure setBoxValue was called for each box with empty string
+    expect(setBoxValueStub.callCount).to.equal(validConfig.boxCount);
+    for (let i = 0; i < validConfig.boxCount; i += 1) {
+      expect(setBoxValueStub.getCall(i).args).to.deep.equal([i, '']);
+    }
+
+    // Ensure fieldValue was cleared
+    expect((field as any).fieldValue).to.equal('');
+
+    // Ensure focus was set on the first box
+    sinon.assert.calledOnceWithExactly(focusBoxStub, 0);
+  });
 });
